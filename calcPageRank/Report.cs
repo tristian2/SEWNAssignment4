@@ -43,19 +43,19 @@ namespace ParseHtmlLinks
                         c = dateGroup.Select(priceLog => priceLog.Child)
                     };
 
-            foreach (var item in query)
+            foreach (var outlink in query)
             {
                 int row = 0;
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(this.ResultsReport, true))
                 {
-                    file.WriteLine("<Visited " + item.p + ">");
+                    file.WriteLine("<Visited " + outlink.p + ">");
                 }
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(this.CrawlReport, true))
                 {
-                    file.WriteLine("<Visited " + item.p + ">");
+                    file.WriteLine("<Visited " + outlink.p + ">");
                 }
                 
-                foreach (var child in item.c)
+                foreach (var child in outlink.c)
                 {
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(this.CrawlReport, true))
                     {

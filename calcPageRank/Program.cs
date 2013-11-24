@@ -18,6 +18,10 @@ namespace ParseHtmlLinks
         public static List<String> Pages = new List<string>();
         public static string aVisitedPage = "";
 
+        public static List<Relation> relationShipsList = new List<Relation>();
+        
+
+
         static void Main(string[] args)
         {
             String urlToProcess = ("http://www.dcs.bbk.ac.uk/~martin/sewn/ls4/sewn-crawl-2013.txt");
@@ -37,14 +41,75 @@ namespace ParseHtmlLinks
             Console.Write("Report run, check \nPress any key to exit");
             Console.Write("number of links:" + numberOfPages.ToString());
             PrintCollection<string>(Pages);
+            createAdjacencyMatrix(numberOfPages, Pages);
             Console.Read();
         }
 
+        public static List<bool[]> createAdjacencyMatrix(int numberOfPages, List<String> Pages)
+        {
+            //bool[,] matrix = new bool[Pages.Count, Pages.Count];
+            List<bool[]> matrix = new List<bool[]>();
+
+
+
+            //matrix.Initialize();
+            
+
+            int outlinkCount=0;
+            foreach (var outlink in Pages) //outlinks
+            {
+                bool[] row = new bool[Pages.Count];
+
+                int inlinkCount=0;
+                foreach (var inlink in Pages)// inlinks
+                {
+                    if (!(outlink == inlink))
+                    {
+                        //check to see if the outlink is a child?  if so, then set the index of the row outlink
+                        var children =
+                        from p in relationShipsList
+                        where p.Parent == outlink
+                        select p;
+
+
+                        if (!(children.Count() == 0))
+                        {
+
+                            Console.WriteLine("Children of " + outlink + ":" + children.Count());
+                            foreach (var child in children)
+                            {
+                                if (inlink == child.Child)
+                                {
+                                    row[inlinkCount] = true;
+                                    //too spped up,, remove from the relationships list
+                                    //relationShipsList.RemoveAll(Parent => Parent.Parent == outlink);
+                                    break;
+                                }
+                                    
+                                Console.WriteLine("child:"+ child.Child);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        row[inlinkCount] = false;
+                    }
+                    inlinkCount++;
+                }
+                matrix.Add(row);
+                outlinkCount++;
+                
+            }
+
+
+            return matrix;
+
+        }
 
         public static void PrintCollection<T>(IEnumerable<T> col)
         {
-            foreach (var item in col)
-                Console.WriteLine(item); // Replace this with your version of printing
+            foreach (var outlink in col)
+                Console.WriteLine(outlink); // Replace this with your version of printing
         }
 
 
@@ -77,29 +142,48 @@ namespace ParseHtmlLinks
                        
                             while ((line = reader.ReadLine()) != null)
                             {
-                                
-                                //Console.WriteLine(line); // Write to console.
 
-                                if (line.StartsWith("Visited: "))
+                                currentPage = line;
+                                //Console.WriteLine(line); // Write to console.
+                                if (currentPage.IndexOf("?") > 0)
+                                    currentPage = currentPage.Remove(currentPage.IndexOf("?"));
+
+                                if (currentPage.StartsWith("Visited: "))
                                 {
-                                    aVisitedPage = line.Replace("Visited: ", "");
-                                    currentPage = line.Replace("Visited: ", "");
-                                    Console.WriteLine(currentPage); // Write to console.
+
+                                    aVisitedPage = currentPage.Replace("Visited: ", "");
+                                    currentPage = currentPage.Replace("Visited: ", "").Replace("    ", "");
+                                    //Console.WriteLine(currentPage); // Write to console.
                                 }
                                 else //it a link
                                 {
+                                    Relation relation = new Relation();
+
+
                                     //Console.WriteLine(absolutizeUri(line.Replace("Link: ", "").Replace("    ", ""))); // Write to console.
-                                    currentPage = line.Replace("Link: ", "");
+                                    currentPage = currentPage.Replace("Link: ", "").Replace("    ", "");
+
                                     if (!currentPage.Contains("http://"))
                                     {
                                         currentPage = aVisitedPage + currentPage;
                                     }
+
+                                    relation.Parent = aVisitedPage;
+                                    relation.Child = currentPage;
+                                    relationShipsList.Add(relation);
+
+
                                     
                                 }
+
+
                                 Pages.Add(currentPage);
                                 numberOfPages++;
+                           
 
                             }
+                            
+                            Pages = Pages.Distinct().ToList(); // remove duplicates
                         }
                        
                     }

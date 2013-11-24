@@ -91,9 +91,9 @@ namespace ParseHtmlLinks
         // Adds a HTML link found in the webpage to collection htmlLinks.
         public void addHtmlLink(String parentUrl, String htmlLink)
         {
-            foreach (var item in rob.getRobotExclusions())
+            foreach (var outlink in rob.getRobotExclusions())
             {
-                if (htmlLink.Contains(item))
+                if (htmlLink.Contains(outlink))
                 {
                     return;
                 }
