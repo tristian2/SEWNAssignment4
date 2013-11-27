@@ -8,7 +8,7 @@ using System.Xml;
 using System.Xml.XPath;
 using HtmlAgilityPack;
 
-namespace ParseHtmlLinks
+namespace generateMatrix
 {
     class Robot
     {

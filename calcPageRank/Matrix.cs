@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ParseHtmlLinks
+namespace generateMatrix
 {
     class Matrix
     {
-        bool[] row;
+        int[] row;
         
     }
 }

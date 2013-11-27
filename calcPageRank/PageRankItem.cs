@@ -5,9 +5,9 @@ using System.Text;
 
 namespace generateMatrix
 {
-    class Relation
+    class PageRankItem
     {
-        public string Parent { get; set; }
-        public string Child { get; set; }
+        public string Page { get; set; }
+        public double PageRank { get; set; }
     }
 }
