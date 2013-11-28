@@ -9,5 +9,11 @@ namespace generateMatrix
     {
         public string Page { get; set; }
         public double PageRank { get; set; }
+
+        public PageRankItem(string Page, double PageRank)
+        {
+            this.Page = Page;
+            this.PageRank = PageRank;
+        }
     }
 }
